@@ -24,7 +24,7 @@ import java.util.Map;
 
 public interface CubaPivotTableServerRpc extends ServerRpc {
 
-    void onCellClick(@Nullable Double value, Map<String, String> filters);
+    void onCellClick(@Nullable Double value, Map<String, String> filters, String[] dataItemKeys);
 
     void onRefresh(List<String> rows, List<String> cols, String renderer,
                    String aggregation, List<String> aggregationProperties,
