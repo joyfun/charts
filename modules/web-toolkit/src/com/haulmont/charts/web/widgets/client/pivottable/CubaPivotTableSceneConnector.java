@@ -211,14 +211,8 @@ public class CubaPivotTableSceneConnector extends AbstractComponentConnector {
             }
 
             if (events.contains(CubaPivotTableSceneState.CELL_CLICK_EVENT)) {
-                pivotTableEvents.setCellClickHandler(event -> {
-                    JsArrayString jsDataItemKeys = event.getDataItemKeys();
-                    String[] dataItemKeys = new String[jsDataItemKeys.length()];
-                    for (int i = 0; i < jsDataItemKeys.length(); ++i) {
-                        dataItemKeys[i] = jsDataItemKeys.get(i);
-                    }
-                    rpc.onCellClick(event.getValue(), event.getFilters(), dataItemKeys);
-                });
+                pivotTableEvents.setCellClickHandler(event ->
+                        rpc.onCellClick(event.getValue(), event.getFilters(), event.getDataItemKeys()));
             }
         }
 

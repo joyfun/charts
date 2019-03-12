@@ -22,7 +22,7 @@ import com.google.gson.JsonSerializationContext;
 import com.haulmont.charts.gui.data.DataItem;
 import com.haulmont.charts.gui.data.EntityDataItem;
 import com.haulmont.charts.web.widgets.pivottable.serialization.PivotJsonSerializationContext;
-import com.haulmont.charts.web.widgets.pivottable.serialization.PivotTableSerializationContextProvider;
+import com.haulmont.charts.web.widgets.pivottable.serialization.PivotTableSerializationContext;
 import com.haulmont.chile.core.datatypes.Datatypes;
 import com.haulmont.chile.core.datatypes.impl.EnumClass;
 import com.haulmont.chile.core.model.Instance;
@@ -77,7 +77,7 @@ public class PivotTableDataItemsSerializer {
     }
 
     public JsonArray serialize(List<DataItem> items, JsonSerializationContext context,
-                               Consumer<PivotTableSerializationContextProvider> consumer) {
+                               Consumer<PivotTableSerializationContext> postSerializationHandler) {
         JsonArray serialized = new JsonArray();
 
         if (context instanceof PivotJsonSerializationContext) {
@@ -89,10 +89,8 @@ public class PivotTableDataItemsSerializer {
                     addProperty(itemElement, property, value, pivotContext, item);
                 }
 
-                if (consumer != null) {
-                    PivotTableSerializationContextProvider provider =
-                            new PivotTableSerializationContextProvider(item, itemElement, pivotContext);
-                    consumer.accept(provider);
+                if (postSerializationHandler != null) {
+                    postSerializationHandler.accept(new PivotTableSerializationContext(item, itemElement, pivotContext));
                 }
 
                 serialized.add(itemElement);

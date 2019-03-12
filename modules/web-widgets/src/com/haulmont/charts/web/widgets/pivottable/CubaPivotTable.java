@@ -25,7 +25,7 @@ import com.haulmont.charts.web.widgets.pivottable.events.CellClickEvent;
 import com.haulmont.charts.web.widgets.pivottable.events.CellClickListener;
 import com.haulmont.charts.web.widgets.pivottable.events.RefreshEvent;
 import com.haulmont.charts.web.widgets.pivottable.events.RefreshListener;
-import com.haulmont.charts.web.widgets.pivottable.serialization.PivotTableSerializationContextProvider;
+import com.haulmont.charts.web.widgets.pivottable.serialization.PivotTableSerializationContext;
 import com.haulmont.charts.web.widgets.pivottable.serialization.PivotTableSerializer;
 import com.haulmont.cuba.web.widgets.WebJarResource;
 import com.vaadin.server.KeyMapper;
@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.vaadin.util.ReflectTools.findMethod;
 
@@ -172,7 +173,7 @@ public class CubaPivotTable extends AbstractComponent {
 
                 String dataJsonString;
 
-                if (cellClickListenersPresent()) {
+                if (isCellClickListenerPresent()) {
                     dataItemMapper = new KeyMapper<>();
                     dataJsonString = pivotTableSerializer.serializeData(pivotTable, this::serializeDataItemKey);
                 } else {
@@ -191,14 +192,14 @@ public class CubaPivotTable extends AbstractComponent {
         }
     }
 
-    protected boolean cellClickListenersPresent() {
-        return !getListeners(CellClickEvent.class).isEmpty();
+    protected boolean isCellClickListenerPresent() {
+        return hasListeners(CellClickEvent.class);
     }
 
-    protected void serializeDataItemKey(PivotTableSerializationContextProvider provider) {
-        JsonObject jsonObject = provider.getJsonObject();
-        String dataItemKey = dataItemMapper.key(provider.getDataItem());
-        JsonElement serializedKey = provider.getSerializationContext().serialize(dataItemKey);
+    protected void serializeDataItemKey(PivotTableSerializationContext context) {
+        JsonObject jsonObject = context.getJsonObject();
+        String dataItemKey = dataItemMapper.key(context.getDataItem());
+        JsonElement serializedKey = context.getSerializationContext().serialize(dataItemKey);
         jsonObject.add(CUBA_DATA_ITEM_KEY, serializedKey);
     }
 
@@ -308,11 +309,10 @@ public class CubaPivotTable extends AbstractComponent {
         private static final long serialVersionUID = 4789102026045383363L;
 
         @Override
-        public void onCellClick(Double value, Map<String, String> filters, String[] dataItemKeys) {
-            List<DataItem> usedDataItems = new ArrayList<>();
-            for (String dataItemKey: dataItemKeys) {
-                usedDataItems.add(dataItemMapper.get(dataItemKey));
-            }
+        public void onCellClick(Double value, Map<String, String> filters, List<String> dataItemKeys) {
+            List<DataItem> usedDataItems = dataItemKeys.stream()
+                    .map(s -> dataItemMapper.get(s))
+                    .collect(Collectors.toList());
             fireEvent(new CellClickEvent(CubaPivotTable.this, value, filters, usedDataItems));
         }
 

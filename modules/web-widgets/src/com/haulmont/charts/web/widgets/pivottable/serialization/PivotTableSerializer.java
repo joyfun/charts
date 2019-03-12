@@ -29,7 +29,7 @@ public interface PivotTableSerializer {
     String serializeData(PivotTableModel pivotTable);
 
     @Nullable
-    String serializeData(PivotTableModel pivotTable, Consumer<PivotTableSerializationContextProvider> consumer);
+    String serializeData(PivotTableModel pivotTable, Consumer<PivotTableSerializationContext> postSerializationHandler);
 
     String toJson(Object value);
 }

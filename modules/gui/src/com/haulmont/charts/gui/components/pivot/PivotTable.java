@@ -777,14 +777,14 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
 
         /**
          * @return a map in which keys are localized property names used in columns or rows
-         * and values are localized property values.
+         * and values are localized property values
          */
         public Map<String, String> getFilters() {
             return filters;
         }
 
         /**
-         * @return a list of {@link DataItem} used in the clicked cell value generation.
+         * @return a list of {@link DataItem} used in the clicked cell value generation
          */
         public List<DataItem> getUsedDataItems() {
             return usedDataItems;

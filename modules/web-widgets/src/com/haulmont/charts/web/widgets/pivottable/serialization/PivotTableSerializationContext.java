@@ -20,14 +20,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.haulmont.charts.gui.data.DataItem;
 
-public class PivotTableSerializationContextProvider {
+public class PivotTableSerializationContext {
 
     protected DataItem dataItem;
     protected JsonObject jsonObject;
     protected JsonSerializationContext serializationContext;
 
-    public PivotTableSerializationContextProvider(DataItem dataItem, JsonObject jsonObject,
-                                                  JsonSerializationContext serializationContext) {
+    public PivotTableSerializationContext(DataItem dataItem, JsonObject jsonObject,
+                                          JsonSerializationContext serializationContext) {
         this.dataItem = dataItem;
         this.jsonObject = jsonObject;
         this.serializationContext = serializationContext;

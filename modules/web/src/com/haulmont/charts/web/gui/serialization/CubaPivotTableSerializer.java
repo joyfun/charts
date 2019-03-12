@@ -109,11 +109,12 @@ public class CubaPivotTableSerializer implements PivotTableSerializer {
 
     @Override
     @Nullable
-    public String serializeData(PivotTableModel pivotTable, Consumer<PivotTableSerializationContextProvider> consumer) {
+    public String serializeData(PivotTableModel pivotTable, Consumer<PivotTableSerializationContext> postSerializationHandler) {
         DataProvider dataProvider = pivotTable.getDataProvider();
         if (dataProvider != null) {
             PivotJsonSerializationContext context = createPivotJsonSerializationContext(pivotTable);
-            JsonElement dataProviderElement = itemsSerializer.serialize(dataProvider.getItems(), context, consumer);
+            JsonElement dataProviderElement =
+                    itemsSerializer.serialize(dataProvider.getItems(), context, postSerializationHandler);
             return gson.toJson(dataProviderElement);
         }
         return null;
