@@ -59,7 +59,7 @@ import static com.vaadin.util.ReflectTools.findMethod;
 public class CubaPivotTable extends AbstractComponent {
     private static final long serialVersionUID = 3250758720037122580L;
 
-    protected static final String CUBA_DATA_ITEM_KEY = "cubaDataItemKey";
+    protected static final String DATA_ITEM_KEY = "$k";
 
     private static final Logger log = LoggerFactory.getLogger(CubaPivotTable.class);
 
@@ -201,7 +201,7 @@ public class CubaPivotTable extends AbstractComponent {
         JsonObject jsonObject = context.getJsonObject();
         String dataItemKey = dataItemMapper.key(context.getDataItem());
         JsonElement serializedKey = context.getSerializationContext().serialize(dataItemKey);
-        jsonObject.add(CUBA_DATA_ITEM_KEY, serializedKey);
+        jsonObject.add(DATA_ITEM_KEY, serializedKey);
     }
 
     protected void forceStateChange() {
