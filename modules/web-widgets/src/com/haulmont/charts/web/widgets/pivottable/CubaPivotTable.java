@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.vaadin.util.ReflectTools.findMethod;
@@ -310,10 +311,11 @@ public class CubaPivotTable extends AbstractComponent {
 
         @Override
         public void onCellClick(Double value, Map<String, String> filters, List<String> dataItemKeys) {
-            List<DataItem> usedDataItems = dataItemKeys.stream()
-                    .map(s -> dataItemMapper.get(s))
-                    .collect(Collectors.toList());
-            fireEvent(new CellClickEvent(CubaPivotTable.this, value, filters, usedDataItems));
+            Supplier<List<DataItem>> usedDataItemsRetriever = () ->
+                    dataItemKeys.stream()
+                            .map(s -> dataItemMapper.get(s))
+                            .collect(Collectors.toList());
+            fireEvent(new CellClickEvent(CubaPivotTable.this, value, filters, usedDataItemsRetriever));
         }
 
         @Override
