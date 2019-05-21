@@ -28,10 +28,15 @@ import java.util.function.Consumer;
 
 public class CubaAmchartsSceneWidget extends Widget {
 
+    protected static final String PIE_TYPE = "pie";
+    protected static final String FUNNEL_TYPE = "funnel";
+
     protected CubaAmchartsJsOverlay jsOverlay;
 
     protected Consumer<JsChartClickEvent> chartClickHandler;
     protected Consumer<JsChartClickEvent> chartRightClickHandler;
+
+    protected boolean animateAgain = true;
 
     public CubaAmchartsSceneWidget() {
         setElement(Document.get().createDivElement());
@@ -134,6 +139,17 @@ public class CubaAmchartsSceneWidget extends Widget {
             jsOverlay.addCategoryItemClickHandler(amchartsEvents.getCategoryItemClickHandler());
         }
 
+        // invoke animation for pie and funnel charts only one time
+        jsOverlay.addOnDrawnHandler(chart -> {
+            String type = chart.getChartType();
+            if ((PIE_TYPE.equals(type) || FUNNEL_TYPE.equals(type))) {
+                if (chart.getStartDuration() > 0 && animateAgain) {
+                    animateAgain();
+                    animateAgain = false;
+                }
+            }
+        });
+
         Scheduler.get().scheduleDeferred(this::updateSize);
     }
 
@@ -199,6 +215,10 @@ public class CubaAmchartsSceneWidget extends Widget {
         if (jsOverlay != null) {
             jsOverlay.zoomValueAxisToValues(index, start, end);
         }
+    }
+
+    public void animateAgain() {
+        jsOverlay.animateAgain();
     }
 
     @Override

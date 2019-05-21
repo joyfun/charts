@@ -100,15 +100,6 @@ public class CubaAmchartsJsOverlay {
             });
         }
 
-        // need to start animation of sliced charts
-        if ("pie" === chart.type || "funnel" === chart.type) {
-            chart.addListener("drawn", function (event) {
-                if (event.chart.startDuration > 0) {
-                    event.chart.animateAgain();
-                }
-            });
-        }
-
         return chart;
     }-*/;
 
@@ -118,6 +109,14 @@ public class CubaAmchartsJsOverlay {
 
     protected static native void updateSize(JavaScriptObject chart) /*-{
         chart.invalidateSize();
+    }-*/;
+
+    public void animateAgain() {
+        animateAgain(chart);
+    }
+
+    protected native void animateAgain(JavaScriptObject chart) /*-{
+        chart.animateAgain();
     }-*/;
 
     public void destroy() {
@@ -456,5 +455,15 @@ public class CubaAmchartsJsOverlay {
                 handler.@java.util.function.Consumer::accept(*)(event);
             }));
         }
+    }-*/;
+
+    public void addOnDrawnHandler(Consumer<JsOnDrawnChartEvent> handler) {
+        addOnDrawnHandler(chart, handler);
+    }
+
+    protected native static void addOnDrawnHandler(JavaScriptObject chart, Consumer<JsOnDrawnChartEvent> handler) /*-{
+        chart.addListener("drawn", function (event) {
+            handler.@java.util.function.Consumer::accept(*)(event.chart);
+        });
     }-*/;
 }
