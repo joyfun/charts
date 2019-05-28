@@ -116,7 +116,7 @@ public class CubaAmchartsJsOverlay {
     }
 
     protected native void animateAgain(JavaScriptObject chart) /*-{
-        chart.animateAgain();
+        chart.animeSlicedCharts();
     }-*/;
 
     public void destroy() {
@@ -457,12 +457,12 @@ public class CubaAmchartsJsOverlay {
         }
     }-*/;
 
-    public void addOnDrawnHandler(Consumer<JsOnDrawnChartEvent> handler) {
-        addOnDrawnHandler(chart, handler);
+    public void addListener(String type, Consumer<? extends JavaScriptObject> handler) {
+        addListener(chart, type, handler);
     }
 
-    protected native static void addOnDrawnHandler(JavaScriptObject chart, Consumer<JsOnDrawnChartEvent> handler) /*-{
-        chart.addListener("drawn", function (event) {
+    protected native static void addListener(JavaScriptObject chart, String type, Consumer<? extends JavaScriptObject> handler) /*-{
+        chart.addListener(type, function (event) {
             handler.@java.util.function.Consumer::accept(*)(event.chart);
         });
     }-*/;

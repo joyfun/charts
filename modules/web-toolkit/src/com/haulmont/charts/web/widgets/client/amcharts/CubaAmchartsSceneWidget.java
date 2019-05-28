@@ -22,6 +22,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Widget;
 import com.haulmont.charts.web.widgets.client.amcharts.events.JsChartClickEvent;
+import com.haulmont.charts.web.widgets.client.utils.JsUtils;
 import com.haulmont.cuba.web.widgets.client.JsDate;
 
 import java.util.function.Consumer;
@@ -36,7 +37,7 @@ public class CubaAmchartsSceneWidget extends Widget {
     protected Consumer<JsChartClickEvent> chartClickHandler;
     protected Consumer<JsChartClickEvent> chartRightClickHandler;
 
-    protected boolean animateAgain = true;
+    protected boolean animateSlicedCharts = true;
 
     public CubaAmchartsSceneWidget() {
         setElement(Document.get().createDivElement());
@@ -139,16 +140,22 @@ public class CubaAmchartsSceneWidget extends Widget {
             jsOverlay.addCategoryItemClickHandler(amchartsEvents.getCategoryItemClickHandler());
         }
 
-        // invoke animation for pie and funnel charts only one time
-        jsOverlay.addOnDrawnHandler(chart -> {
-            String type = chart.getChartType();
-            if ((PIE_TYPE.equals(type) || FUNNEL_TYPE.equals(type))) {
-                if (chart.getStartDuration() > 0 && animateAgain) {
-                    animateAgain();
-                    animateAgain = false;
-                }
+        // add drawn listener and do animation again for pie or funnel charts,
+        // because every call chart.invalidateSize() breaks animation in these charts
+        String type = config.getChartType();
+        if ((PIE_TYPE.equals(type) || FUNNEL_TYPE.equals(type))) {
+            Double startDuration = (Double) JsUtils.getObjectByKey(config, "startDuration");
+            startDuration = startDuration == null ? 1 : startDuration;
+
+            if (startDuration > 0) {
+                jsOverlay.addListener("drawn", event -> {
+                    if (animateSlicedCharts) {
+                        animateAgain();
+                        animateSlicedCharts = false;
+                    }
+                });
             }
-        });
+        }
 
         Scheduler.get().scheduleDeferred(this::updateSize);
     }
